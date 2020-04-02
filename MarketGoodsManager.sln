@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarketGoodsManager", "MarketGoodsManager\MarketGoodsManager.csproj", "{BE2091EE-2D97-4BFB-8568-0F6730E7F076}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BE2091EE-2D97-4BFB-8568-0F6730E7F076}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE2091EE-2D97-4BFB-8568-0F6730E7F076}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE2091EE-2D97-4BFB-8568-0F6730E7F076}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE2091EE-2D97-4BFB-8568-0F6730E7F076}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D1EAE296-2B5A-49D9-B80E-B5A5892A645B}
+	EndGlobalSection
+EndGlobal
