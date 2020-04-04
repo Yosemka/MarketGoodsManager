@@ -4,11 +4,12 @@ using System.Text;
 
 namespace MarketGoodsManager
 {
+    [Serializable]
     class Goods
     {
         private string name;        //по умолчанию модификатор доступа internal
         private double price;
-
+                
         public Goods(string newName, double newPrice)
         {
             name = newName;
@@ -21,22 +22,37 @@ namespace MarketGoodsManager
             price = 0.0;
         }
 
-        public void SetName(string val)
+        public string Name
         {
-            name = val;
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value;
+            }
         }
-        public void SetPrice(float val)
+        public double Price
         {
-            price = val;
+            get
+            {
+                return price;
+            }
+            set
+            {
+                price = value;
+            }
         }
 
-        public string GetName()
+        public void Serialize()
         {
-            return name;
+
         }
-        public double GetPrice()
+
+        public void Deserialize()
         {
-            return price;
+
         }
     }
 }

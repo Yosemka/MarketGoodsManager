@@ -6,6 +6,7 @@ using System.Text;
 
 namespace MarketGoodsManager
 {
+    [Serializable]
     class Supermarket
     {
         private string name;
@@ -83,7 +84,7 @@ namespace MarketGoodsManager
         public SectionGoods GetSection(string sectionName)
         {
             int tmp = FindSection(sectionName);
-            if (tmp != QUEUE_EMPTY_CONST)
+            if (tmp == QUEUE_EMPTY_CONST)
             {
                 Console.WriteLine($"Секция \"{sectionName}\" не найдена.");
                 return null;
@@ -180,7 +181,15 @@ namespace MarketGoodsManager
                 return false;
         }
 
+        public void Serialize()
+        {
 
+        }
+
+        public void Deserialize()
+        {
+
+        }
 
 
     }

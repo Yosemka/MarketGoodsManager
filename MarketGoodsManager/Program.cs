@@ -8,6 +8,7 @@ namespace MarketGoodsManager
     //}
     class Program
     {
+        
         static void Main(string[] args)
         {
             Supermarket sp = new Supermarket(56);
@@ -15,12 +16,18 @@ namespace MarketGoodsManager
             sp.Name = "Пятерочка";
             sp.AddNewSection("Бытовая химия");
             sp.AddNewSection("Бытовая");
-            sp.DeleteSectionAndGoods();
-            sp.DeleteSectionAndGoods();
-            sp.DeleteSectionAndGoods();
+            
 
             SectionGoods section_1 = sp.GetSection("Бытовая химия");
-            section_1.AddGood();
+            if (section_1 != null)
+            {
+                section_1.GetTotalSectionPrice();
+                section_1.AppendGood("Banana", 45.9);
+            }
+            else
+                section_1.AppendGood();
+
+            section_1.ShowAllGoods();
 
             Console.WriteLine("Hello World!");
         }
