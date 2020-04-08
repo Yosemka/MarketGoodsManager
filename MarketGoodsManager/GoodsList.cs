@@ -1,28 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace MarketGoodsManager
 {
     [Serializable]
-    class TwoLinkedList
+    class GoodsList
     {
-        public TwoLinkedList(Goods data)
+       
+        public class TwoLinkedList          //Вложенный класс Элемент списка
         {
-            Data = data;
+            //Поля
+            public Goods Data { get; set; }                 //Тип поля данных элемента списка
+            public TwoLinkedList Next { get; set; }
+            public TwoLinkedList Previous { get; set; }
+
+            //Конструкторы
+            public TwoLinkedList(Goods data)
+            {
+                Data = data;
+            }
+
+            public TwoLinkedList() { }
+
         }
-        
-        public TwoLinkedList(){ }
-
-        public TwoLinkedList next;
-        public TwoLinkedList prev;
-
-        public Goods Data { get; set; }
-        
-        TwoLinkedList head;
+                       
+        private TwoLinkedList head;
         int count = 0;
-
+        
         public int Add(Goods data)
         {
             TwoLinkedList node = new TwoLinkedList(data);
@@ -30,15 +37,15 @@ namespace MarketGoodsManager
             if (head == null)
             {
                 head = node;
-                head.next = node;
-                head.prev = node;
+                head.Next = node;
+                head.Previous = node;
             }
             else
             {
-                node.prev = head.prev;
-                node.next = head;
-                head.prev.next = node;
-                head.prev = node;
+                node.Previous = head.Previous;
+                node.Next = head;
+                head.Previous.Next = node;
+                head.Previous = node;
             }
             return ++count;
             //return count;
@@ -64,10 +71,10 @@ namespace MarketGoodsManager
                     // если удаляется первый элемент
                     if (removedItem == head)
                     {
-                        head = head.next;
+                        head = head.Next;
                     }
-                    removedItem.prev.next = removedItem.next;
-                    removedItem.next.prev = removedItem.prev;
+                    removedItem.Previous.Next = removedItem.Next;
+                    removedItem.Next.Previous = removedItem.Previous;
                 }
                 count--;
                 return true;
@@ -98,7 +105,7 @@ namespace MarketGoodsManager
                     if (current.Data.Name == name) 
                         return current.Data;
                 
-                    current = current.next;
+                    current = current.Next;
                 }
                 while (current != head || current != null);
                 
@@ -122,7 +129,7 @@ namespace MarketGoodsManager
                     if (current.Data.Name == name)
                         return current;
 
-                    current = current.next;
+                    current = current.Next;
                 }
                 while (current != head || current != null);
 
@@ -144,7 +151,7 @@ namespace MarketGoodsManager
                 for(int i = 0; i < count; i++)
                 {
                     allGoods[i] = current.Data;
-                    current = current.next;
+                    current = current.Next;
                 }
                 return allGoods;
             }

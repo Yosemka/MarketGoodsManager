@@ -11,6 +11,8 @@ namespace MarketGoodsManager
         
         static void Main(string[] args)
         {
+
+
             Supermarket sp = new Supermarket(56);
             sp.AddNewSection("Бытовая химия");
             sp.Name = "Пятерочка";
@@ -19,10 +21,11 @@ namespace MarketGoodsManager
             
 
             SectionGoods section_1 = sp.GetSection("Бытовая химия");
+            
             if (section_1 != null)
             {
                 section_1.GetTotalSectionPrice();
-                section_1.AppendGood("Banana", 45.9);
+                section_1.AppendGood();
             }
             else
                 section_1.AppendGood();

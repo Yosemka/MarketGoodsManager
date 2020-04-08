@@ -9,17 +9,15 @@ namespace MarketGoodsManager
     class SectionGoods
     {
         private string name;
-        TwoLinkedList goodsList;
+        GoodsList goodsList;
+
         const string noName = "no name";
+        
+        //Конструктор 
         public SectionGoods(string newName)
         {
             name = newName;
-            goodsList = new TwoLinkedList();
-        }
-
-        ~SectionGoods()
-        {
-            Console.WriteLine($"Отдел \"{this.Name}\" был удален");
+            goodsList = new GoodsList();
         }
 
         public string Name
@@ -31,6 +29,14 @@ namespace MarketGoodsManager
             set
             {
                 name = value;
+            }
+        }
+
+        public GoodsList GoodsList
+        {
+            get
+            {
+                return goodsList;
             }
         }
         //public void AppendGood(string goodName, double goodPrice)
@@ -47,7 +53,7 @@ namespace MarketGoodsManager
         //        goodsList.Add(new Goods(goodName, goodPrice));
         //    }            
         //}
-        private void AppendGood()
+        public void AppendGood()
         {
             if (GetGoodByName(noName) != null)
             {
@@ -99,11 +105,6 @@ namespace MarketGoodsManager
                 Console.WriteLine($"Товар \"{name}\" не найден. Удаление невозможно.");
             }                
         }
-
-        public void ChangePrice(string name, double newPrice) { }
-
-        public void ChangeName(string name, string newName) { }
-
         public Goods GetGoodByName(string name)
         {
             return goodsList.GetElementByName(name);
