@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,7 +9,7 @@ using System.Text;
 namespace MarketGoodsManager
 {
     [Serializable]
-    class Supermarket
+    class Supermarket : ISerializable
     {
         private string name;
         static private int sectionAmount;
@@ -15,6 +17,7 @@ namespace MarketGoodsManager
 
         private static int size;
         private SectionGoods[] sectionsQueue;
+        
         private int front = -1;
         private int rear = -1;
         private const int QUEUE_EMPTY_CONST = -2;
@@ -186,12 +189,19 @@ namespace MarketGoodsManager
 
         }
 
-        public void Deserialize()
+        public Supermarket(SerializationInfo info, StreamingContext context)
         {
-
+            name = (string)info.GetValue("Name", typeof(string));
+            sectionAmount = (int)info.GetValue("GoodsAmount", typeof(int));
+            //sectionsQueue[] = (SectionGoods)info.GetValue("GoodsList", typeof(SectionGoods));
         }
 
-
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Name", name);
+            info.AddValue("GoodsAmount", sectionAmount);
+            //info.AddValue("GoodsList", sectionsQueue);
+        }
     }
 }
 

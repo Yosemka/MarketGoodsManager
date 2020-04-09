@@ -1,27 +1,31 @@
 ﻿using System;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 using System.Collections.Generic;
 using System.Text;
 
 namespace MarketGoodsManager
 {
     [Serializable]
-    class Goods
+    public class Goods : ISerializable
     {
-        private string name;        //по умолчанию модификатор доступа internal
+        //Информационные поля
+        private string name;
         private double price;
-                
-        public Goods(string newName, double newPrice)
+        //указатели на следующий и предыдущий элементы
+        public Goods Next { get; set; }
+        public Goods Previous { get; set; }
+        
+        //Конструкторы
+        public Goods(string newName = "no name", double newPrice = 0)
         {
             name = newName;
             price = newPrice;
         }
 
-        public Goods()
-        {
-            name = "без названия";
-            price = 0.0;
-        }
-
+        public Goods() { }
+        
+        //Методы доступа к информационным полям
         public string Name
         {
             get
@@ -45,14 +49,25 @@ namespace MarketGoodsManager
             }
         }
 
+        public override string ToString()
+        {
+            return string.Format("Название товара: {0}\t Цена товара: {1}\n", name, price);
+        }
         public void Serialize()
         {
 
         }
 
-        public void Deserialize()
+        public Goods(SerializationInfo info, StreamingContext context)
         {
+            name = (string)info.GetValue("Name", typeof(string));
+            price = (double)info.GetValue("Price", typeof(double));
+        }
 
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Name", name);
+            info.AddValue("Price", price);
         }
     }
 }
