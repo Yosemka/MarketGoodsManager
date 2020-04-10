@@ -3,17 +3,17 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
 using System.Text;
-
-
+using System.Xml.Serialization;
+using System.IO;
 
 namespace MarketGoodsManager
 {
     [Serializable]
-    class Supermarket : ISerializable
+    public class Supermarket
     {
         private string name;
         static private int sectionAmount;
-
+        static private string path = @"C:\Users\Mollusc\source\repos\MarketGoodsManager\MarketGoodsManager\bin\Debug\netcoreapp2.1\supermarket.xml";
 
         private static int size;
         private SectionGoods[] sectionsQueue;
@@ -53,7 +53,38 @@ namespace MarketGoodsManager
                 name = value;
             }
         }
+        public int SectionAmount
+        {
+            get
+            {
+                return sectionAmount;
+            }
+            set
+            {
+                sectionAmount = value;
+            }
+        }
 
+        public SectionGoods[] AllExistSections
+        {
+            get
+            {
+                SectionGoods[] sections = new SectionGoods[sectionAmount];
+                for (int i = front; i < sectionAmount; i++)
+                    sections[i - front] = sectionsQueue[i];
+
+                return sections;
+            }
+            set
+            {
+                sectionsQueue = value;
+                if (SectionAmount > 0)
+                {
+                    front = 0;
+                    rear = front + SectionAmount;
+                }
+            }
+        }
         public void AddNewSection(string sectionName)
         {
             if (FindSection(sectionName) != QUEUE_EMPTY_CONST)
@@ -113,6 +144,7 @@ namespace MarketGoodsManager
                     rear++;
 
                 sectionsQueue[rear] = section;
+                sectionAmount++;
                 return rear;
             }
         }
@@ -139,7 +171,7 @@ namespace MarketGoodsManager
                 {
                     front++;
                 }
-
+                sectionAmount--;
                 return tmpSectionName;//front;
             }
         }
@@ -186,22 +218,46 @@ namespace MarketGoodsManager
 
         public void Serialize()
         {
+            XmlSerializer ser = new XmlSerializer(typeof(Supermarket));
+            File.WriteAllText(path, string.Empty);
 
+            using(FileStream st = new FileStream(path, FileMode.OpenOrCreate))
+            {
+                ser.Serialize(st, this);
+            }
         }
-
-        public Supermarket(SerializationInfo info, StreamingContext context)
+        public void Deserialize()
         {
-            name = (string)info.GetValue("Name", typeof(string));
-            sectionAmount = (int)info.GetValue("GoodsAmount", typeof(int));
-            //sectionsQueue[] = (SectionGoods)info.GetValue("GoodsList", typeof(SectionGoods));
+            XmlSerializer ser = new XmlSerializer(typeof(Supermarket));
+            
+            using(FileStream st = new FileStream(path, FileMode.OpenOrCreate))
+            {
+                Supermarket super = (Supermarket)ser.Deserialize(st);
+                this.Name = super.Name;
+                this.SectionAmount = super.SectionAmount;
+                if(SectionAmount > 0)
+                {
+                    front = front + SectionAmount;
+                    rear = front + SectionAmount;
+                    this.AllExistSections = super.AllExistSections;
+                }
+                    
+            }
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue("Name", name);
-            info.AddValue("GoodsAmount", sectionAmount);
-            //info.AddValue("GoodsList", sectionsQueue);
-        }
+        //public Supermarket(SerializationInfo info, StreamingContext context)
+        //{
+        //    name = (string)info.GetValue("Name", typeof(string));
+        //    sectionAmount = (int)info.GetValue("GoodsAmount", typeof(int));
+        //    //sectionsQueue[] = (SectionGoods)info.GetValue("GoodsList", typeof(SectionGoods));
+        //}
+
+        //public void GetObjectData(SerializationInfo info, StreamingContext context)
+        //{
+        //    info.AddValue("Name", name);
+        //    info.AddValue("GoodsAmount", sectionAmount);
+        //    //info.AddValue("GoodsList", sectionsQueue);
+        //}
     }
 }
 
