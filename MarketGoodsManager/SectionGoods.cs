@@ -47,12 +47,12 @@ namespace MarketGoodsManager
             {
                 if (IsEmpty)
                 {
-                    Console.WriteLine("Список товаров пуст.");
+                    //Console.WriteLine("Список товаров пуст.");
                     return null;
                 }
                 else
                 {
-                    Goods[] allGoods = new Goods[count];
+                    allGoods = new Goods[count];
                     Goods current = head;
                     for (int i = 0; i < count; i++)
                     {
@@ -64,7 +64,13 @@ namespace MarketGoodsManager
             }
             set
             {
-                allGoods = value;
+                this.Clear();
+                for(int i = 0; i < value.Length; i++)
+                {
+                    this.AddToList(value[i].Name, value[i].Price, i);
+                    //allGoods[i].Name = value[i].Name;
+                    //allGoods[i].Price = value[i].Price;
+                }
             }
         }
         public int AddGoodAtPosition(int position)
@@ -259,14 +265,17 @@ namespace MarketGoodsManager
 
         
 
-        public void ShowAllGoods()
+        public override string ToString()
         {
             Goods[] allGoods = AllElements;
-
+            string str = "Section: " + this.Name + "\n";
             if (allGoods != null)
                 for (int i = 0; i < allGoods.Length; i++)
-                    Console.WriteLine($"{i + 1}) {allGoods[i].Name}\t{allGoods[i].Price}\n");
-
+                    str += (i + 1).ToString() + ") " + allGoods[i].ToString();
+            else
+                str += "Список товаров пуст...";
+            str += "\n";
+            return str;
         }
 
         public void Serialize()
@@ -289,13 +298,16 @@ namespace MarketGoodsManager
 
             using (FileStream st = new FileStream(path, FileMode.Open))
             {
+                SectionGoods goods = new SectionGoods();
                 //this.Name = "";
                 //this.Count = 0;
                 //this.AllElements;
-                SectionGoods goods = (SectionGoods)ser.Deserialize(st);
+                //this.Clear();
+                goods = (SectionGoods)ser.Deserialize(st);
+                //this.Clear();
                 this.Count = goods.Count;
                 this.Name = goods.Name;
-                
+                this.AllElements = goods.AllElements;
                 //if (goods.AllElements.Length > 0)
                 //{
                 //    for (int i = 0; i < goods.AllElements.Length; i++)

@@ -13,7 +13,7 @@ namespace MarketGoodsManager
     {
         private string name;
         static private int sectionAmount;
-        static private string path = @"C:\Users\Mollusc\source\repos\MarketGoodsManager\MarketGoodsManager\bin\Debug\netcoreapp2.1\supermarket.xml";
+        private const string defaultPath = @"C:\Users\Mollusc\source\repos\MarketGoodsManager\MarketGoodsManager\bin\Debug\netcoreapp2.1\supermarket.xml";
 
         private static int size;
         private SectionGoods[] sectionsQueue;
@@ -83,6 +83,10 @@ namespace MarketGoodsManager
                     front = 0;
                     rear = front + SectionAmount;
                 }
+                //for (int i = 0; i < value.Length; i++)
+                //{
+                //    sectionsQueue[i].AllElements = value[i].AllElements;
+                //}
             }
         }
         public void AddNewSection(string sectionName)
@@ -176,6 +180,15 @@ namespace MarketGoodsManager
             }
         }
 
+        public void Clear()
+        {
+            for(int i = 0; i < sectionsQueue.Length; i++)
+            {
+                sectionsQueue[i] = null;
+            }
+            front = rear = -1;
+            SectionAmount = 0;
+        }
         //Вспомогательные/проверочные функции
         private int FindSection(string nameToFind)
         {
@@ -215,32 +228,45 @@ namespace MarketGoodsManager
             else
                 return false;
         }
-
+        public override string ToString()
+        {
+            string str = string.Empty;
+            if (!IsQueueEmpty())
+            {
+                foreach (SectionGoods section in AllExistSections)
+                    str += section.ToString();
+            }
+            return str;
+        }
         public void Serialize()
         {
-            XmlSerializer ser = new XmlSerializer(typeof(Supermarket));
-            File.WriteAllText(path, string.Empty);
+            XmlSerializer ser = new XmlSerializer(typeof(SectionGoods[]));
+            File.WriteAllText(defaultPath, string.Empty);
 
-            using(FileStream st = new FileStream(path, FileMode.OpenOrCreate))
+            using(FileStream st = new FileStream(defaultPath, FileMode.OpenOrCreate))
             {
-                ser.Serialize(st, this);
+                ser.Serialize(st, this.AllExistSections);
             }
         }
-        public void Deserialize()
+        public void Deserialize(string path = defaultPath)
         {
-            XmlSerializer ser = new XmlSerializer(typeof(Supermarket));
+            XmlSerializer ser = new XmlSerializer(typeof(SectionGoods[]));
             
             using(FileStream st = new FileStream(path, FileMode.OpenOrCreate))
             {
-                Supermarket super = (Supermarket)ser.Deserialize(st);
-                this.Name = super.Name;
-                this.SectionAmount = super.SectionAmount;
-                if(SectionAmount > 0)
+                SectionGoods[] super = (SectionGoods[])ser.Deserialize(st);
+                this.Name = "NAME";
+                
+                this.Clear();
+                foreach(SectionGoods section in super)
                 {
-                    front = front + SectionAmount;
-                    rear = front + SectionAmount;
-                    this.AllExistSections = super.AllExistSections;
+                    this.AddInQueue(section);
                 }
+                //if(SectionAmount > 0)
+                //{
+                //    front = front + SectionAmount;
+                //    rear = front + SectionAmount;
+                //}
                     
             }
         }
