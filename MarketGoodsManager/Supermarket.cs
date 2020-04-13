@@ -13,11 +13,11 @@ namespace MarketGoodsManager
     {
         private string name;
         static private int sectionAmount;
-        private const string defaultPath = @"C:\Users\Mollusc\source\repos\MarketGoodsManager\MarketGoodsManager\bin\Debug\netcoreapp2.1\supermarket.xml";
+        private const string defaultPath = @"C:\Users\Mollusc\source\repos\MarketGoodsManager\MarketGoodsManager\bin\Debug\netcoreapp2.1\";
 
         private static int size;
         private SectionGoods[] sectionsQueue;
-        
+
         private int front = -1;
         private int rear = -1;
         private const int QUEUE_EMPTY_CONST = -2;
@@ -27,7 +27,8 @@ namespace MarketGoodsManager
         {
             name = "no name";
             sectionAmount = 0;
-            size = 10;
+            if (size <= 0)
+                size = 10;
             sectionsQueue = new SectionGoods[size];
         }
 
@@ -38,7 +39,7 @@ namespace MarketGoodsManager
             if (sz > 0)
                 size = sz;
             else
-                size = 10;
+                size = 1;
             sectionsQueue = new SectionGoods[size];
         }
 
@@ -64,29 +65,32 @@ namespace MarketGoodsManager
                 sectionAmount = value;
             }
         }
-
+        public int QueueSize
+        {
+            get { return size; }
+            set { size = value; }
+        }
+        [XmlArrayItem("SectionName")]
         public SectionGoods[] AllExistSections
         {
             get
             {
                 SectionGoods[] sections = new SectionGoods[sectionAmount];
-                for (int i = front; i < sectionAmount; i++)
-                    sections[i - front] = sectionsQueue[i];
-
-                return sections;
+                if (!IsQueueEmpty())
+                {
+                    for (int i = front; i <= rear; i++)
+                        sections[i - front] = sectionsQueue[i];
+                    return sections;
+                }
+                else return null;
             }
             set
             {
-                sectionsQueue = value;
-                if (SectionAmount > 0)
+                sectionAmount = 0;
+                for (int i = 0; i < value.Length; i++)
                 {
-                    front = 0;
-                    rear = front + SectionAmount;
+                    AddInQueue(value[i]);
                 }
-                //for (int i = 0; i < value.Length; i++)
-                //{
-                //    sectionsQueue[i].AllElements = value[i].AllElements;
-                //}
             }
         }
         public void AddNewSection(string sectionName)
@@ -104,7 +108,9 @@ namespace MarketGoodsManager
                 }
                 else
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Список заполнен. Нет свободного места для добавления секции.");
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
             }
         }
@@ -207,7 +213,7 @@ namespace MarketGoodsManager
             else
                 return false;
         }
-        private bool IsQueueFull()
+        public bool IsQueueFull()
         {
             if ((front == 0 && rear == size - 1) || rear == front - 1)
                 return true;
@@ -236,38 +242,54 @@ namespace MarketGoodsManager
                 foreach (SectionGoods section in AllExistSections)
                     str += section.ToString();
             }
+            else
+                str += "Нет существующих секций.";
             return str;
         }
-        public void Serialize()
+        public string Serialize()
         {
-            XmlSerializer ser = new XmlSerializer(typeof(SectionGoods[]));
-            File.WriteAllText(defaultPath, string.Empty);
+            string path = defaultPath + this.Name + ".xml";
+            //XmlSerializer ser = new XmlSerializer(typeof(SectionGoods[]));
+            XmlSerializer ser = new XmlSerializer(typeof(Supermarket));
+            File.WriteAllText(path, string.Empty);
 
-            using(FileStream st = new FileStream(defaultPath, FileMode.OpenOrCreate))
+            using(FileStream st = new FileStream(path, FileMode.OpenOrCreate))
             {
-                ser.Serialize(st, this.AllExistSections);
+                ser.Serialize(st, this);
             }
+            return path;
         }
-        public void Deserialize(string path = defaultPath)
+        public void Deserialize(string path = defaultPath + "supermarket.xml")
         {
-            XmlSerializer ser = new XmlSerializer(typeof(SectionGoods[]));
+            //XmlSerializer ser = new XmlSerializer(typeof(SectionGoods[]));
+            XmlSerializer ser = new XmlSerializer(typeof(Supermarket));
             
             using(FileStream st = new FileStream(path, FileMode.OpenOrCreate))
             {
-                SectionGoods[] super = (SectionGoods[])ser.Deserialize(st);
-                this.Name = "NAME";
+                //SectionGoods[] super = (SectionGoods[])ser.Deserialize(st);
+                Supermarket sp = (Supermarket)ser.Deserialize(st);
                 
-                this.Clear();
-                foreach(SectionGoods section in super)
+                this.Name = sp.Name;
+                this.SectionAmount = sp.SectionAmount;
+                this.front = sp.front;
+                this.rear = sp.rear;
+                Array.Resize<SectionGoods>(ref this.sectionsQueue, sp.QueueSize);
+                for(int i = 0; i < sp.sectionsQueue.Length; i++)
                 {
-                    this.AddInQueue(section);
+                    this.sectionsQueue[i] = sp.sectionsQueue[i];
                 }
+                //if (super.Length > 0)
+                //{
+                //    
+                //    this.Name = "NAME";
+                //   
+                //}
                 //if(SectionAmount > 0)
                 //{
                 //    front = front + SectionAmount;
                 //    rear = front + SectionAmount;
                 //}
-                    
+
             }
         }
 
